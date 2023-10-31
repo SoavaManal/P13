@@ -3,12 +3,12 @@ import iconChat from "../asset/icon-chat.png";
 import iconMoney from "../asset/icon-money.png";
 import iconSecurity from "../asset/icon-security.png";
 import FeatureItem from "../composant/FeatureItem";
-import Header from "../composant/Header";
 import Footer from "../composant/Footer";
+import HeaderUser from "../composant/HeaderUser";
 export default function Home() {
   return (
     <>
-      <Header/>
+      <HeaderUser/>
       <main>
         <div className="hero">
           <section className="hero-content">

@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { store } from "..";
-import { setToken } from "../actions/jwt";
+import { setToken } from "../reducers/jwt.reducer";
 import Footer from "../composant/Footer";
-import Header from "../composant/Header";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import HeaderUser from "../composant/HeaderUser";
 
 export default function SignIn() {
+  const dispatch=useDispatch()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -26,7 +27,7 @@ export default function SignIn() {
     const request = {
       method: "POST",
       headers: {
-        "Content-Type": "application/json", // Type de contenu JSON
+        "Content-Type": "application/json", 
       },
       body: JSON.stringify(data),
     };
@@ -42,7 +43,7 @@ export default function SignIn() {
       .then((data) => {
         document.querySelector(".error").innerHTML = "";
         console.log("Réponse du serveur :", data.body.token);
-        store.dispatch(setToken(data.body.token));
+        dispatch(setToken(data.body.token));
         if (remember) {
           localStorage.setItem("token", data.body.token);
         }
@@ -54,7 +55,7 @@ export default function SignIn() {
   };
   return (
     <>
-      <Header />
+      <HeaderUser />
       <main className="main bg-dark">
         <section className="sign-in-content">
           <i className="fa fa-user-circle sign-in-icon"></i>

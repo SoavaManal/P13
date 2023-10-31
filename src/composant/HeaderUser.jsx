@@ -1,13 +1,18 @@
 import { NavLink } from "react-router-dom";
 import "../css/main.css";
 import argentBankLogo from "../asset/argentBankLogo.png";
-import { store } from "../index";
-import {setToken} from "../actions/jwt";
+import { setToken } from "../reducers/jwt.reducer";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../reducers/user.reducer";
 
 export default function HeaderUser() {
+  const token = useSelector((state) => state.authReducer.token);
+  const firstName = useSelector((state) => state.userReducer.user?.firstName);
+  const dispatch = useDispatch();
   const handleOut = () => {
     localStorage.removeItem("token");
-    store.dispatch(setToken(null));
+    dispatch(setToken(null));
+    dispatch(setUser(null));
   };
   return (
     <nav className="main-nav">
@@ -19,16 +24,23 @@ export default function HeaderUser() {
         />
         <h1 className="sr-only">Argent Bank</h1>
       </NavLink>
-      <div>
-        <NavLink className="main-nav-item" to="/home" >
+      {token ? (
+        <div>
+          <NavLink className="main-nav-item" to="/home">
+            <i className="fa fa-user-circle"></i>
+            {firstName}
+          </NavLink>
+          <NavLink className="main-nav-item" to="/home" onClick={handleOut}>
+            <i className="fa fa-sign-out"></i>
+            Sign Out
+          </NavLink>
+        </div>
+      ) : (
+        <NavLink className="main-nav-item" to="/user/login">
           <i className="fa fa-user-circle"></i>
-          Tony
+          Sign In
         </NavLink>
-        <NavLink className="main-nav-item" to="/home" onClick={handleOut}>
-          <i className="fa fa-sign-out"></i>
-          Sign Out
-        </NavLink>
-      </div>
+      )}
     </nav>
   );
 }
