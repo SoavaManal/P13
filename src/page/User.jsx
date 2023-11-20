@@ -1,46 +1,58 @@
 import { useEffect } from "react";
 import Footer from "../composant/Footer";
-import HeaderUser from "../composant/HeaderUser";
+import Header from "../composant/Header";
 import Wrapper from "../composant/Wrapper";
 import "../css/main.css";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setUser,
-  updateFirstname,
-  updateLastname,
-} from "../reducers/user.reducer";
+import { setUser, updateName } from "../reducers/user.reducer";
 import { useState } from "react";
 
 export default function Profile() {
   const token = useSelector((state) => state.authReducer.token);
   const [isEdit, setIsEdit] = useState(false);
-  const [firstNameUp, setFirstNameUp] = useState();
-  const [lastNameUp, setLastNameUp] = useState();
+  const [firstNameUp, setFirstNameUp] = useState("");
+  const [lastNameUp, setLastNameUp] = useState("");
+  const [error, setError] = useState(false);
   const dispatch = useDispatch();
   const handleForum = () => {
     setIsEdit(true);
   };
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
+    if (!firstNameUp.trim() || !lastNameUp.trim()) {
+      setError("fields are required.");
+      return;
+    }
+    setError("");
     const requestPut = {
       method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ firstName:firstNameUp, lastName:lastNameUp }),
+      body: JSON.stringify({ firstName: firstNameUp, lastName: lastNameUp }),
     };
-    fetch("http://localhost:3001/api/v1/user/profile", requestPut)
-      .then((response) => response.json())
-      .then((data) => {
-        dispatch(updateFirstname(firstNameUp));
-        dispatch(updateLastname(lastNameUp));
-        setIsEdit(false); 
-      });
+    try {
+      const response = await fetch(
+        "http://localhost:3001/api/v1/user/profile",
+        requestPut
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      dispatch(updateName({ firstName: firstNameUp, lastName: lastNameUp }));
+      setIsEdit(false);
+    } catch (error) {
+      console.error(
+        "Une erreur s'est produite lors de la récupération des données :",
+        error
+      );
+    }
   };
   const handleCancel = () => {
     setIsEdit(false);
-    console.log(isEdit);
+    setError("");
   };
   useEffect(() => {
     const getProfile = async () => {
@@ -58,10 +70,10 @@ export default function Profile() {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        console.log(response);
         const data = await response.json();
         dispatch(setUser(data.body));
-        console.log(data.body);
+        setFirstNameUp(data.body.firstName)
+        setLastNameUp(data.body.lastName)
         return data.body;
       } catch (error) {
         console.error(
@@ -71,46 +83,53 @@ export default function Profile() {
       }
     };
     console.log(getProfile());
-  }, []);
+  }, [dispatch, token]);
   const firstName = useSelector((state) => state.userReducer.user?.firstName);
   const lastName = useSelector((state) => state.userReducer.user?.lastName);
-  console.log(firstName);
-  console.log(lastName);
   return (
     <>
-      <HeaderUser />
+      <Header />
       <main className="main bg-dark">
         <div className="header">
           <h1>
             Welcome back
             <br />
-            {firstName} {lastName}
+            {isEdit ? "" : `${firstName} ${lastName}`}
           </h1>
           {isEdit ? (
-            <form onSubmit={handleSave}>
-              <input
-                type="text"
-                id="firstName"
-                value={firstName}
-                onInput={(e) => setFirstNameUp(e.target.value)}
-              />
-              <input
-                type="text"
-                id="lastName"
-                value={lastName}
-                onInput={(e) => setLastNameUp(e.target.value)}
-              />
-              <button type="submit">Save</button>
-              <button type="button" onClick={handleCancel}>
-                Cancel
-              </button>
+            <form onSubmit={handleSave} className="formUp">
+              <div className="formInput">
+                <input
+                  type="text"
+                  id="firstName"
+                  defaultValue={firstName}
+                  onChange={(e) => setFirstNameUp(e.target.value)}
+                />
+                <input
+                  type="text"
+                  id="lastName"
+                  defaultValue={lastName}
+                  onChange={(e) => setLastNameUp(e.target.value)}
+                />
+                <p className="error">{error}</p>
+              </div>
+              <div className="formBtn">
+                <button type="submit">Save</button>
+                <button type="button" onClick={handleCancel}>
+                  Cancel
+                </button>
+              </div>
             </form>
           ) : (
             ""
           )}
-          <button className="edit-button" onClick={() => handleForum()}>
-            Edit Name
-          </button>
+          {isEdit ? (
+            ""
+          ) : (
+            <button className="edit-button" onClick={() => handleForum()}>
+              Edit Name
+            </button>
+          )}
         </div>
         <h2 className="sr-only">Accounts</h2>
 

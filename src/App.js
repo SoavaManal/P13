@@ -19,6 +19,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-
-// import {useDispatch, useSelector} from "react-redux";
-// const token = useSelector((state)=>state.user.token)

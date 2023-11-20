@@ -1,0 +1,133 @@
+URL 
+Verbe (get/post/patch/put/delete)
+Données en entrées ? Leur format le cas échéant
+Données en sortie ? Leur format le cas échéant
+Codes d'erreurs possibles
+
+// Récuperation de toute les comptes
+URL: /accounts
+Verbe: Get
+Données entrées : token(String)
+Données en sortie: 
+[
+    {
+        id,
+        acount
+    }
+    ...
+]
+Codes d'erreurs possible : 
+-200 OK : La requête a réussi.
+-401 Unauthorized : L'utilisateur n'est pas authentifié.
+-403 Forbidden : L'utilisateur authentifié n'a pas les autorisations nécessaires pour accéder à ces informations.
+-404 Not Found : Le compte de l'utilisateur n'existe pas ou l'URL spécifiée est incorrecte.
+-500 Internal Server Error : Une erreur du serveur.
+
+// Récuperation de solde d'un compte spécifique
+URL: /accounts/:id
+Verbe: Get
+Données entrées: 
+-token(String)
+-id(String)
+Données en sortie: 
+{
+    label(String)
+    NumberAccount(Number)
+    Balance(Number)
+}
+Codes d'erreurs possible : 
+-200 OK : La requête a réussi.
+-401 Unauthorized : L'utilisateur n'est pas authentifié.
+-403 Forbidden : L'utilisateur authentifié n'a pas les autorisations nécessaires pour accéder à ces informations.
+-404 Not Found : Le compte de l'utilisateur n'existe pas ou l'URL spécifiée est incorrecte.
+-500 Internal Server Error : Une erreur du serveur.
+
+// Récupération de tableau de transaction
+URL: /accounts/:id/transactions
+Verbe : Get
+Données entrées : 
+-token(String)
+-id(String)
+-
+Données en sortie : 
+[
+    {
+        "transactionId"(Number)
+        "Date"(Date)
+        "Description"(String),
+        "Amount"(Number),
+        "Balance"(Number)
+    }
+]
+Codes d'erreurs possible : 
+-200 OK : La requête a réussi.
+-401 Unauthorized : L'utilisateur n'est pas authentifié.
+-403 Forbidden : L'utilisateur authentifié n'a pas les autorisations nécessaires pour accéder à ces informations.
+-404 Not Found : Le compte de l'utilisateur n'existe pas ou l'URL spécifiée est incorrecte.
+-500 Internal Server Error : Une erreur du serveur.
+
+// Récupération des informations d'une transaction spécifique
+URL : accounts/:id/transactions/:transactionId
+Verbe : GET
+Données entrées :
+-token(String)
+-id(String)
+-transactionId(String)
+Données en sortie:
+{
+    "TransactionType"(String),
+    "Category"(String),
+    "Notes"(String)
+}
+Codes d'erreurs possible : 
+-200 OK : La requête a réussi, et les informations sur le compte sont renvoyées.
+-401 Unauthorized : L'utilisateur n'est pas authentifié ou l'authentification a échoué.
+-403 Forbidden : L'utilisateur authentifié n'a pas les autorisations nécessaires pour accéder à ces informations.
+-404 Not Found : Le compte de l'utilisateur n'existe pas ou l'URL spécifiée est incorrecte.
+-500 Internal Server Error : Une erreur du serveur.
+
+// --- Catégory---
+// Récuperation de la liste des catégories
+URL: /transactions/categorys
+Verbe: Get
+Données entrées : token(String)
+Données en sortie : liste de categories disponibles
+[
+    {
+        categoryId(Number),
+        "category1"(String)
+    }
+    ...
+]
+Codes d'erreurs possibles :
+-200 OK : La requête a réussi.
+-401 Unauthorized : L'utilisateur n'est pas authentifié.
+-500 Internal Server Error : Une erreur du serveur.
+
+// Modification de la Categorie
+URL: /transactions/:transactionId/category
+Verbe: PUT
+Données entrées:
+-token(String)?
+-transactionId(Number||String)
+-categoryId(Number)
+Données en sortie: message.
+Codes d'erreurs possible:
+-200 OK : La requête a réussi.
+-401 Unauthorized : L'utilisateur n'est pas authentifié.
+-404 Not Found : La transaction spécifiée n'existe pas ou l'URL est incorrecte.
+-500 Internal Server Error : Une erreur du serveur.
+
+// Modification de la Notes 
+URL: /transactions/:transactionId/notes
+Verbe: PUT
+Données entrées:
+-token(String)?
+-transactionId(String)
+-newnote(String)
+Données en sortie: message?
+Codes d'erreurs possible:
+-200 OK : La requête a réussi.
+-401 Unauthorized : L'utilisateur n'est pas authentifié.
+-404 Not Found : La transaction spécifiée n'existe pas ou l'URL est incorrecte.
+-500 Internal Server Error : Une erreur du serveur.

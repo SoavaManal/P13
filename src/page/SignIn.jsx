@@ -3,13 +3,14 @@ import { setToken } from "../reducers/jwt.reducer";
 import Footer from "../composant/Footer";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import HeaderUser from "../composant/HeaderUser";
+import Header from "../composant/Header";
 
 export default function SignIn() {
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
+  const [error, setError] = useState(false);
 
   // checkbox function
   const handleCheckbox = () => {
@@ -27,35 +28,37 @@ export default function SignIn() {
     const request = {
       method: "POST",
       headers: {
-        "Content-Type": "application/json", 
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     };
-    const result = fetch("http://localhost:3001/api/v1/user/login", request)
-      .then((response) => {
-        if (!response.ok) {
-          document.querySelector(".error").innerHTML =
-            "Incorrect Username or Password";
-          throw new Error("Erreur HTTP " + response.status);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        document.querySelector(".error").innerHTML = "";
-        console.log("Réponse du serveur :", data.body.token);
-        dispatch(setToken(data.body.token));
-        if (remember) {
-          localStorage.setItem("token", data.body.token);
-        }
-        navigate("/user/profile");
-      })
-      .catch((error) => {
-        console.error("Erreur lors de la requête :", error);
-      });
+    try {
+      const response = await fetch(
+        "http://localhost:3001/api/v1/user/login",
+        request
+      );
+      if (!response.ok) {
+        setError("Incorrect Username or Password");
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setError("");
+      console.log("Réponse du serveur :", data.body.token);
+      dispatch(setToken(data.body.token));
+      if (remember) {
+        localStorage.setItem("token", data.body.token);
+      }
+      navigate("/user/profile");
+    } catch (error) {
+      console.error(
+        "Une erreur s'est produite lors de la récupération des données :",
+        error
+      );
+    }
   };
   return (
     <>
-      <HeaderUser />
+      <Header />
       <main className="main bg-dark">
         <section className="sign-in-content">
           <i className="fa fa-user-circle sign-in-icon"></i>
@@ -78,7 +81,7 @@ export default function SignIn() {
               />
             </div>
             <div>
-              <p className="error"></p>
+              <p className="error">{error}</p>
             </div>
             <div className="input-remember">
               <input

@@ -5,7 +5,7 @@ import { setToken } from "../reducers/jwt.reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../reducers/user.reducer";
 
-export default function HeaderUser() {
+export default function Header() {
   const token = useSelector((state) => state.authReducer.token);
   const firstName = useSelector((state) => state.userReducer.user?.firstName);
   const dispatch = useDispatch();
@@ -26,7 +26,7 @@ export default function HeaderUser() {
       </NavLink>
       {token ? (
         <div>
-          <NavLink className="main-nav-item" to="/home">
+          <NavLink className="main-nav-item" to="/user/profile">
             <i className="fa fa-user-circle"></i>
             {firstName}
           </NavLink>

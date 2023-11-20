@@ -4,11 +4,11 @@ import iconMoney from "../asset/icon-money.png";
 import iconSecurity from "../asset/icon-security.png";
 import FeatureItem from "../composant/FeatureItem";
 import Footer from "../composant/Footer";
-import HeaderUser from "../composant/HeaderUser";
+import Header from "../composant/Header";
 export default function Home() {
   return (
     <>
-      <HeaderUser/>
+      <Header/>
       <main>
         <div className="hero">
           <section className="hero-content">
